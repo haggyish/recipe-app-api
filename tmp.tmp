@@ -1,8 +1,177 @@
-<   ports:
-<       - "8000:8000"
->    ports:
->      - "8000:8000"
->    volumes:
->      - ./app:/app
->    command: >
->      sh -c "python manage.py runserver 0.0.0.0:8000"
+Now that we have our create user function finished there's just one more
+
+function that we need to add to our user model manager and that is the create
+
+super user function.
+
+Create super user is a function used by the Django CLI when
+
+we're creating new users using the command line.
+
+So we want to make sure
+
+it's included in our custom user model so that we can take advantage of the
+
+Django management command for creating a super user.
+
+Alright so let's add this
+
+function to our user model.
+
+We're going to start as always by adding a test to
+
+test models.py
+
+The test is going to be to test that a super user is created
+
+when we call create super user and that it is assigned
+
+the is staff and the is super user settings.
+
+So let's type
+
+user or first let's type
+
+our function
+
+def test_create_new_superuser
+
+and give it the doc string
+
+test creating a new super user.
+
+Below this let's create our user with
+
+user = get_user_model
+
+.objects.create_superuser
+
+and let's pass in an email
+
+address we don't need to worry about saving the email address as a variable
+
+we'll just type test@londonappdev.com
+
+and below this we'll just type a
+
+password test123 and then let's do an assertion here so let's say
+
+a self.assertTrue
+
+user.is_superuser
+
+and self.assertTrue
+
+user.is_staff
+
+You may be wondering where the is_superuser field is on our user model
+
+because we didn't add it here but it is included as part of the
+
+PermissionsMixin.
+
+Okay so now let's save this and go back to our terminal
+
+and lets run our tests.
+
+And you can see that the tests fail because the create super
+
+user doesn't exist so let's go ahead and implement this feature and make this
+
+test pass.
+
+So head over to models.py below the create user.
+
+Lets type def
+
+create_superuser and pass in self
+
+email, password.
+
+Because we're only really going
+
+to be using the create super user with the command-line we don't need to worry
+
+about the extra fields.
+
+So let's create a doc string that says creates and saves a
+
+new super user.
+
+And below this let's create our user using our create user
+
+function we don't need to write all this code again we can just type
+
+user =
+
+self.create_user
+
+with an email and password that we're provided.
+
+So at this
+
+point we have a user the same as the user that is created here now all we need to
+
+do is set user.is_staff = True
+
+and below that we set user.is_superuser
+
+= True
+
+and then because we modified the user we need to save it
+
+just type user.save
+
+using=self._db
+
+and then finally we
+
+return the user.
+
+Okay now we can save this file head back to our terminal run
+
+our test again and this time the test should pass.
+
+Okay so now we can see that
+
+we have ran four tests and they all came back okay now we can commit our changes
+
+to our git project.
+
+Before we do that let's just add the flake command so
+
+flake8 and what this will do is it will run linting on our project and
+
+let's just make sure that we don't have any linting failures here.
+
+Okay you can
+
+see we have one failure because we haven't populated our admin.py
+
+yet so this... it doesn't like that this is an un-used
+
+import so I'm just going to add a
+
+a hash to the front here just to basically
+
+disable this line I'm gonna save that and we're gonna be populating this later
+
+so let's not delete it just yet.
+
+Now let's run the test and the flake again
+
+and everything should come back okay
+
+yep we got a green arrow here no bad output
+
+so now let's just type git add . to add all the files to git and then git
+
+commit - a
+
+and let's type the commit message added custom user model
+
+okay now
+
+we can push this up to github and Travis should be triggered and should run our
+
+tests and it will email us if there is any failures with that project.
